@@ -1,6 +1,7 @@
 package com.example.bottomnavigation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -10,7 +11,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,8 +22,11 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -64,35 +70,39 @@ class MainActivity : ComponentActivity() {
 
                     }
                 }*/
-                Row() {
-                    val isCheck = remember { mutableStateOf(false) }
+                Column() {
+                    MyUI()
+                    Row() {
+                        val isCheck = remember { mutableStateOf(false) }
 
-                    Card(
-                        modifier = Modifier.background(Color.White),
-                        elevation = 3.dp,
-                        shape = RoundedCornerShape(10.dp),
-                        border = BorderStroke(1.5.dp, color = Color.Green)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(25.dp)
-                                .background(if (isCheck.value) Color.Green else Color.White)
-                                .clickable {
-                                    isCheck.value = !isCheck.value
-                                }, contentAlignment = Center
+                        Card(
+                            modifier = Modifier.background(Color.White),
+                            elevation = 3.dp,
+                            shape = RoundedCornerShape(10.dp),
+                            border = BorderStroke(1.5.dp, color = Color.Green)
                         ) {
-                            if (isCheck.value) Icon(
-                                Icons.Default.Check, contentDescription = "", tint = Color.White
-                            )
-                        }
+                            Box(
+                                modifier = Modifier
+                                    .size(25.dp)
+                                    .background(if (isCheck.value) Color.Green else Color.White)
+                                    .clickable {
+                                        isCheck.value = !isCheck.value
+                                    }, contentAlignment = Center
+                            ) {
+                                if (isCheck.value) Icon(
+                                    Icons.Default.Check, contentDescription = "", tint = Color.White
+                                )
+                            }
 
+                        }
+                        Text(
+                            modifier = Modifier
+                                .align(CenterVertically)
+                                .padding(start = 10.dp),
+                            text = "I agree with the terms & condition",
+                            style = AppObjectTheme.appTypography.largerTitle.copy(fontSize = 30.sp)
+                        )
                     }
-                    Text(
-                        modifier = Modifier
-                            .align(CenterVertically)
-                            .padding(start = 10.dp),
-                        text = "I agree with the terms & condition",
-                    )
                 }
             }
         }
@@ -109,6 +119,47 @@ fun Greeting(name: String) {
 fun DefaultPreview() {
     BottomNavigationTheme {
         Greeting("Android")
+    }
+}
+
+@Composable
+fun MyUI() {
+    val contextForToast = LocalContext.current.applicationContext
+
+    TopAppBar(
+        title = {
+            Text(text = "Toast")
+        },
+        navigationIcon = {
+            IconButton(onClick = {
+                Toast.makeText(contextForToast, "Back Icon Click", Toast.LENGTH_SHORT)
+                    .show()
+            }) {
+                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Go Back")
+            }
+        },
+        actions = {
+            TopAppBarActionButton(
+                imageVector = Icons.Outlined.Lock,
+                description = "Lock"
+            ) {
+                Toast.makeText(contextForToast, "Lock Click", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    )
+}
+
+@Composable
+fun TopAppBarActionButton(
+    imageVector: ImageVector,
+    description: String,
+    onClick: () -> Unit
+) {
+    IconButton(onClick = {
+        onClick()
+    }) {
+        Icon(imageVector = imageVector, contentDescription = description)
     }
 }
 
